@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Recipe {
+  id           String           @id @default(cuid())
+  title        String
+  summary      String
+  ingredients  String[]
+  instructions String[]
+  rating       Rating
+  categoryId   RecipeCategory[]
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  image_url    String
+  prep_time    Int
+  cook_time    Int
+  portions     Int
+  userId       String
+  user         Users            @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id         String           @id @default(cuid())
+  title      String
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+  recipes    RecipeCategory[]
+  userId     String
+  user       Users            @relation(fields: [userId], references: [id])
+
+  @@unique([title, userId])
+}
+
+model RecipeCategory {
+  recipe     Recipe   @relation(fields: [recipeId], references: [id])
+  recipeId   String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([recipeId, categoryId])
+}
+
+enum Rating {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+}
+
+model Users {
+  id         String     @id @default(cuid())
+  username   String     @unique
+  email      String     @unique
+  password   String
+  recipes    Recipe[]
+  categories Category[]
+  tokens     Token[]
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
+  expiredAt DateTime
+
+  user Users @relation(fields: [userId], references: [id])
+
+  @@index([userId], name: "user_id_idx")
+}
