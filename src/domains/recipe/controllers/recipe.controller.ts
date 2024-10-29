@@ -46,7 +46,7 @@ export const recipeControllerFactory: RecipeControllerFactory = (service: Recipe
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Uživatel neautentikován. 1' })
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Uživatel neautentikován.' })
     }
 
     const token = authHeader.split(' ')[1]
@@ -55,7 +55,7 @@ export const recipeControllerFactory: RecipeControllerFactory = (service: Recipe
 
     const userId = decoded.id
     if (!userId) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Uživatel neautentikován. 2 ' })
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Uživatel neautentikován.' })
     }
 
     const recipeResult = await service.getRecipeById(req.params.id, userId)

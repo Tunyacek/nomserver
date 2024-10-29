@@ -6,10 +6,12 @@ import { imageModule } from './domains/image/image.module'
 import { registerModule } from './domains/userAuth/modules/register.module'
 import { loginModule } from './domains/userAuth/modules/login.module'
 import { authenticatedUserModule } from './domains/userAuth/modules/user.module'
+
 import 'dotenv/config'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { authenticate } from './middleware'
+import { wakeUpModule } from './domains/wakeUp/wakeUp.module'
 
 const app: Express = express()
 const port = process.env.PORT || 3000
@@ -20,6 +22,7 @@ const imageAPI = imageModule()
 const registerAPI = registerModule()
 const loginAPI = loginModule()
 const userAPI = authenticatedUserModule()
+const wakeUpAPI = wakeUpModule()
 
 app.use(express.json())
 app.use(cookieParser())
@@ -32,6 +35,7 @@ app.use('/api/categories', authenticate, categoryAPI)
 app.use('/api/register', registerAPI)
 app.use('/api/login', loginAPI)
 app.use('/api/authentication', userAPI)
+app.use('/api/wakeUp', wakeUpAPI)
 
 app.use(errorHandler)
 
