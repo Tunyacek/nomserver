@@ -8,7 +8,7 @@ type WakeUpControllerFactory = () => {
 
 export const wakeUpControllerFactory: WakeUpControllerFactory = () => {
   const wakeUp = async (_req: Request, res: Response, _next: NextFunction) => {
-    return res.status(StatusCodes.OK)
+    return res.status(StatusCodes.OK).send('Server se probouzí')
   }
   return { wakeUp }
 }
