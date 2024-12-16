@@ -42,11 +42,29 @@ export const recipeServiceFactory = (
   }
 
   const updateRecipe = async (id: string, recipe: RecipeSchema, userId: string) => {
+    const categoryTitles = recipe.categoryTitles
+
+    const categoryIds = await Promise.all(
+      categoryTitles.map(async (title) => {
+        const category = await categoryValidationService.getCategoryByTitle([title], userId)
+
+        if (category.length === 0) {
+          const newCategory = await categoryValidationService.createAfterCheck({ title }, userId)
+          return newCategory.id
+        }
+
+        return category[0].id
+      })
+    )
+
+    const recipeWithIds = { ...recipe, categoryId: categoryIds }
+
     const foundRecipe = await recipeRepository.getRecipeById(id, userId)
     if (!foundRecipe) {
       throw new NotFoundError('Recept nenalezen')
     }
-    return await recipeRepository.updateRecipe(id, recipe)
+
+    return await recipeRepository.updateRecipe(id, recipeWithIds)
   }
 
   const deleteRecipe = async (id: string, userId: string) => {

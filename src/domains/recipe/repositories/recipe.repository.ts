@@ -107,6 +107,10 @@ export const recipeRepositoryFactory = () => {
 
     const validCategoryIds = categoryIds.filter((id): id is string => id !== null)
 
+    await prisma.recipeCategory.deleteMany({
+      where: { recipeId: id },
+    })
+
     const updatedRecipe = await prisma.recipe.update({
       where: { id },
       data: {
@@ -116,7 +120,6 @@ export const recipeRepositoryFactory = () => {
           connect: { id: userId },
         },
         categoryId: {
-          set: [],
           create: validCategoryIds.map((id) => ({
             category: { connect: { id } },
           })),
